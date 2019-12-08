@@ -7,10 +7,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.polyblack.tinkoffnews.data.TNews;
 import com.polyblack.tinkoffnews.recview.RecAdapter;
 import com.polyblack.tinkoffnews.utilities.NetworkUtils;
 import com.polyblack.tinkoffnews.utilities.OpenNewsJsonUtils;
@@ -55,14 +57,14 @@ public class MainActivity extends AppCompatActivity {
         ErrorMessageTV.setVisibility(View.VISIBLE);
     }
 
-    private void initRecyclerView(List<String> newsResults) {
+    private void initRecyclerView(List<TNews> newsResults) {
         recView = (RecyclerView) findViewById(R.id.news_recview);
         recView.setLayoutManager(new LinearLayoutManager(this));
         recAdapter = new RecAdapter(newsResults);
         recView.setAdapter(recAdapter);
     }
 
-    public class NewsQueryTask extends AsyncTask<Void, Void, List<String>> {
+    public class NewsQueryTask extends AsyncTask<Void, Void, List<TNews>> {
 
         @Override
         protected void onPreExecute() {
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected List<String> doInBackground(Void... params) {
+        protected List<TNews> doInBackground(Void... params) {
             URL newsSearchUrl = NetworkUtils.buildUrl();
             String newsSearchResults = null;
 
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 String jsonNewsResponse = NetworkUtils
                         .getResponseFromHttpUrl(newsSearchUrl);
 
-                List<String> simpleJsonNewsData = OpenNewsJsonUtils
+                List<TNews> simpleJsonNewsData = OpenNewsJsonUtils
                         .getSimpleNewsStringsFromJson(MainActivity.this, jsonNewsResponse);
 
                 return simpleJsonNewsData;
@@ -91,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<String> newsResults) {
+        protected void onPostExecute(List<TNews> newsResults) {
             LoadingIndicator.setVisibility(View.INVISIBLE);
             if (newsResults != null) {
                 showNewsDataView();
